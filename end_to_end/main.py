@@ -74,9 +74,9 @@ def main():
         streaming=True
     )
     dataset = DatasetDict({
-        'train': raw_dataset['train'].shuffle(seed=SEED),
-        'validation': raw_dataset['train'].select(range(4)),
-        'test': raw_dataset['train'].select(range(4))
+        'train': raw_dataset['train'],
+        'validation': raw_dataset['train'].take(1),
+        'test': raw_dataset['train'].take(1)
     })
     del raw_dataset, dataset["test"]
     print('Done')
