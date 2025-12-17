@@ -240,16 +240,13 @@ else:
     IS_SAGEMAKER_MP_POST_1_10 = False
 
 
-if TYPE_CHECKING:
-    from trl import SFTTrainer
-
 ######## packaging
 TRAINER_STATE_NAME = "trainer_state.json"
 
 # Original copyright 2020-2025 The HuggingFace Team. All rights reserved.
 # Modifications Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 def prox_inner_training_loop(
-    self: SFTTrainer, batch_size=None, args=None, resume_from_checkpoint=None, trial=None, ignore_keys_for_eval=None
+    self, batch_size=None, args=None, resume_from_checkpoint=None, trial=None, ignore_keys_for_eval=None
 ):
     self.accelerator.free_memory()
     try:
