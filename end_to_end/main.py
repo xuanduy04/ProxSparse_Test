@@ -15,7 +15,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 from pathlib import Path
 
-import config  # configurations for lambdas
+import end_to_end.config as config  # configurations for lambdas
 from patch_transformers_trainer import prox_inner_training_loop, prox_compute_loss
 from prox_linear import replace_prox_linear
 

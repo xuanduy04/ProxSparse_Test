@@ -2,7 +2,7 @@ import torch
 from torch.nn import Linear
 import torch.nn as nn
 import torch.nn.functional as F
-import config
+import end_to_end.config as config
 
 class ProxLinear(Linear):
     def __init__(self, in_features, out_features, bias=True, device=None, dtype=None):

@@ -19,7 +19,7 @@ from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
 import time
 import math
 
-import config
+import end_to_end.config as config
 
 
 from prox_op import replace_weight, compute_mask_loss
