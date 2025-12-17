@@ -29,6 +29,8 @@ CUDA_VISIBLE_DEVICES=7 python "$PROJECT_ROOT/end-to-end/main.py" \
 
 echo -e "Finished learning, now extracting binary mask. Mask stored in proximal_* directory"
 
-python "$PROJECT_ROOT/end-to-end/mask_op.py" \
+cd "$PROJECT_ROOT"
+python -m end_to_end.mask_op \
   --model "$DIR" \
   --ckpt "last"
+

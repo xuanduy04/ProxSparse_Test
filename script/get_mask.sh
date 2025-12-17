@@ -20,6 +20,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # ---------------- MAIN ---------------- #
 echo -e "Extracting binary mask. Mask stored in proximal_* directory"
 
-python "$PROJECT_ROOT/end-to-end/mask_op.py" \
+cd "$PROJECT_ROOT"
+python -m end_to_end.mask_op \
   --model "$DIR" \
   --ckpt "last"
