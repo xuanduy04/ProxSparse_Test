@@ -238,13 +238,18 @@ if is_sagemaker_mp_enabled():
     from transformers.trainer_pt_utils import smp_forward_backward, smp_forward_only, smp_gather, smp_nested_concat
 else:
     IS_SAGEMAKER_MP_POST_1_10 = False
+
+
+if TYPE_CHECKING:
+    from trl import SFTTrainer
+
 ######## packaging
 TRAINER_STATE_NAME = "trainer_state.json"
 
 # Original copyright 2020-2025 The HuggingFace Team. All rights reserved.
 # Modifications Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 def prox_inner_training_loop(
-    self, batch_size=None, args=None, resume_from_checkpoint=None, trial=None, ignore_keys_for_eval=None
+    self: SFTTrainer, batch_size=None, args=None, resume_from_checkpoint=None, trial=None, ignore_keys_for_eval=None
 ):
     self.accelerator.free_memory()
     self._train_batch_size = batch_size
@@ -366,6 +371,7 @@ def prox_inner_training_loop(
 
     # Activate gradient checkpointing if needed
     if args.gradient_checkpointing:
+        self.current_gradient_accumulation_steps = args.gradient_accumulation_steps
         if args.gradient_checkpointing_kwargs is None:
             gradient_checkpointing_kwargs = {}
         else:
