@@ -96,7 +96,7 @@ def main():
     parser.add_argument('--mask', type=str, default="meta-llama/Meta-Llama-3-8B",
                         help='Provide the mask name for testing')
     parser.add_argument('--method', type=str, default="else")
-    parser.add_argument('--batch_size', type=int, default=None)
+    parser.add_argument('--batch_size', type=str, default='auto')
     parser = add_ckpt_argument(parser)
 
     args = parser.parse_args()
