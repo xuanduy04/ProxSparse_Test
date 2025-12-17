@@ -167,7 +167,9 @@ def main():
     evaluate(model, tokenizer, args.batch_size)
 
 
-def evaluate(model, tokenizer, batch_size=None):
+def evaluate(model, tokenizer, batch_size):
+    batch_size = batch_size if batch_size is not None else "auto"
+    print(f"Evaluating with {batch_size=}")
     lm = HFLM(
         pretrained=model,
         tokenizer=tokenizer,
@@ -187,7 +189,7 @@ def evaluate(model, tokenizer, batch_size=None):
             "winogrande",
             "wikitext",
         ],
-        batch_size=batch_size if batch_size is not None else "auto",
+        batch_size=batch_size if batch_size is not None else "auto"
     )
     print(results)
 
