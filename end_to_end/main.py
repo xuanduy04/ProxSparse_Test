@@ -16,8 +16,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from pathlib import Path
 
 import end_to_end.config as config  # configurations for lambdas
-from patch_transformers_trainer import prox_inner_training_loop, prox_compute_loss
-from prox_linear import replace_prox_linear
+from end_to_end.patch_transformers_trainer import prox_inner_training_loop, prox_compute_loss
+from end_to_end.prox_linear import replace_prox_linear
 
 
 def seed_everything(seed):
