@@ -1,9 +1,10 @@
 import argparse
 import torch
 import numpy as np
-
+import os
 import random
 
+os.environ["HF_TRACKIO_DISABLE"] = "1"
 from trl import SFTConfig, SFTTrainer
 from datasets import load_dataset, DatasetDict
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -101,8 +102,8 @@ if config.project_lambda2 == 1:
 else:
     repository_id = f"{BASE_MODEL.split('/')[1]}-{dataset_id}_sft_final_{samples}_lr{lr}_len{ctx_len}_batch{batch_size}_lambda{config.lambda_}"
 
-BASE_DIR = Path(__file__).resolve().parent
-repository_path = BASE_DIR.parent.parent / "saved_models" / repository_id
+# BASE_DIR = Path(__file__).resolve().parent
+# repository_path = BASE_DIR.parent.parent / "saved_models" / repository_id
 
 
 sft_config = SFTConfig(
@@ -127,6 +128,7 @@ sft_config = SFTConfig(
     save_total_limit=10,
     load_best_model_at_end=True,
     save_only_model=True,
+    report_to="none",
 )
 
 
