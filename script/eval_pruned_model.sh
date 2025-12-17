@@ -22,7 +22,7 @@ cd "$PROJECT_ROOT"
 
 CUDA_VISIBLE_DEVICES=7 PYTHONPATH="$PROJECT_ROOT" \
 python -m eval.eval_mask \
-  --model "${model_dir}/${model_subdir}" \
+  --model_name "${model_dir}/${model_subdir}" \
   --mask_dir "$DIR" \
   --ckpt "${1:-last}" \
   --batch_size "${2:-auto}"
