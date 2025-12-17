@@ -11,6 +11,8 @@ import torch.nn.functional as F
 from torch.nn import Linear
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from utils.ckpt_loading import *
+
 try:
     from lm_eval import evaluator
     from lm_eval.models.huggingface import HFLM
@@ -90,17 +92,23 @@ def replace_linear(model, mask_set):
 def main():
     seed_everything(SEED)
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default="meta-llama/Meta-Llama-3-8B",
-                        help='Provide the model name for finetuning')
+    parser.add_argument('--model_dir', type=str, default="meta-llama/Meta-Llama-3-8B")
     parser.add_argument('--mask', type=str, default="meta-llama/Meta-Llama-3-8B",
                         help='Provide the mask name for testing')
     parser.add_argument('--method', type=str, default="else")
     parser.add_argument('--batch_size', type=int, default=None)
+    parser = add_ckpt_argument(parser)
 
     args = parser.parse_args()
-    model_name = args.model
     mask_name = args.mask
     method = args.method
+    model_dir = args.model_dir
+    ckpt = args.ckpt
+
+    if ckpt == 'all':
+        raise NotImplementedError("Please eval checkpoints one-by-one")
+    selected_checkpoints = select_checkpoints(model_dir, ckpt)
+    model_name = model_dir + "/" + selected_checkpoints[0]
 
     model = AutoModelForCausalLM.from_pretrained(
         model_name,

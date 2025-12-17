@@ -3,12 +3,13 @@ SEED = 1836
 import argparse
 import os
 import random
-from pathlib import Path
 
 import numpy as np
 import torch
 
 from transformers import AutoModelForCausalLM
+
+from utils.ckpt_loading import *
 
 
 def seed_everything(seed):
@@ -40,49 +41,13 @@ def main():
     seed_everything(SEED)
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_dir", type=str, default="meta-llama/Meta-Llama-3-8B")
-
-    def ckpt_type(value):
-        if value in {"all", "last"}:
-            return value
-        try:
-            return int(value)
-        except ValueError:
-            raise argparse.ArgumentTypeError(
-                "ckpt must be an integer, 'all', or 'last'"
-            )
-    parser.add_argument("--ckpt", type=ckpt_type, default="last",
-        help="Which checkpoint to load (int, 'all', or 'last')")
-
+    parser = add_ckpt_argument(parser)
 
     args = parser.parse_args()
     model_dir = args.model_dir
     ckpt = args.ckpt
 
-    checkpoints = sorted(
-        (
-            p.name for p in Path(model_dir).iterdir()
-            if p.is_dir() and p.name.startswith("checkpoint-")
-        ),
-        key=lambda name: int(name.split("-", 1)[1])
-    )
-    if not checkpoints:
-        raise ValueError("No checkpoint directories found.")
-
-    if ckpt == "all":
-        selected_checkpoints = checkpoints
-    elif ckpt == "last":
-        selected_checkpoints = [checkpoints[-1]]
-    else:
-        try:
-            selected_checkpoints = [
-                next(
-                    name for name in checkpoints
-                    if int(name.split("-", 1)[1]) == ckpt
-                )
-            ]
-        except StopIteration:
-            raise ValueError(f"Checkpoint {ckpt} not found.")
-
+    selected_checkpoints = select_checkpoints(model_dir, ckpt)
     for checkpoint in selected_checkpoints:
         model_name = model_dir + "/" + checkpoint
         print(f"Getting the mask of checkpoint {checkpoint}")
