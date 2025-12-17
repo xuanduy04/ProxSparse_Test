@@ -11,7 +11,8 @@ per_device_train_batch_size=16
 lambda_=0.2
 
 # -------------- Constants -------------- #
-DIR="${model_subdir}-lr${lr}_len${ctx_len}_batch${per_device_train_batch_size}_lambda${lambda_}"
+lr_float=$(printf "%g" "$lr")
+DIR="${model_subdir}-lr${lr_float}_len${ctx_len}_batch${per_device_train_batch_size}_lambda${lambda_}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -29,5 +30,5 @@ CUDA_VISIBLE_DEVICES=7 python "$PROJECT_ROOT/end-to-end/main.py" \
 echo -e "Finished learning, now extracting binary mask. Mask stored in proximal_* directory"
 
 python "$PROJECT_ROOT/end-to-end/mask_op.py" \
-  --model "$DIR"
+  --model "$PROJECT_ROOT/$DIR"
   --ckpt "last"
