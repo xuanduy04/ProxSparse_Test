@@ -115,13 +115,13 @@ sft_config = SFTConfig(
     logging_strategy="steps",
     logging_steps=0.1,
     logging_first_step=True,
-    evaluation_strategy="steps",
+    eval_strategy="steps",
+    eval_steps=0.1,
+    eval_accumulation_steps=2,
     save_strategy="steps",
     save_steps= 0.1,
     save_total_limit=10,
     load_best_model_at_end=True,
-    eval_accumulation_steps=2,
-    eval_steps=0.1,
     save_only_model= True,
 )
 
