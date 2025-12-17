@@ -71,6 +71,7 @@ def main():
         data_files={
             "train": str(BASE_DIR.parent / "data" / "for_susi" / "*.parquet")
         },
+        streaming=True
     )
     dataset = DatasetDict({
         'train': raw_dataset['train'].shuffle(seed=SEED),
