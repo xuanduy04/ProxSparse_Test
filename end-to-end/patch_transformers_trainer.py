@@ -512,6 +512,7 @@ def prox_inner_training_loop(
         self._evaluate(trial, ignore_keys_for_eval, skip_scheduler=True)
 
     total_batched_samples = 0
+    start_time = time.time()
     for epoch in range(epochs_trained, num_train_epochs):
         epoch_iterator = train_dataloader
         if hasattr(epoch_iterator, "set_epoch"):
@@ -665,7 +666,7 @@ def prox_inner_training_loop(
                 self.state.epoch = epoch + (step + 1 + steps_skipped) / steps_in_epoch
                 self.control = self.callback_handler.on_step_end(args, self.state, self.control)
 
-                self._maybe_log_save_evaluate(tr_loss, grad_norm, model, trial, epoch, ignore_keys_for_eval)
+                self._maybe_log_save_evaluate(tr_loss, grad_norm, model, trial, epoch, start_time, ignore_keys_for_eval)
             else:
                 self.control = self.callback_handler.on_substep_end(args, self.state, self.control)
 
@@ -685,7 +686,7 @@ def prox_inner_training_loop(
             self.control.should_training_stop = True
 
         self.control = self.callback_handler.on_epoch_end(args, self.state, self.control)
-        self._maybe_log_save_evaluate(tr_loss, grad_norm, model, trial, epoch, ignore_keys_for_eval)
+        self._maybe_log_save_evaluate(tr_loss, grad_norm, model, trial, epoch, start_time, ignore_keys_for_eval)
 
         if DebugOption.TPU_METRICS_DEBUG in self.args.debug:
             if is_torch_xla_available():
