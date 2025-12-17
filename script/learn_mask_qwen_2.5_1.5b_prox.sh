@@ -7,7 +7,7 @@ model_subdir=Qwen2.5-1.5B
 
 lr=1e-04
 ctx_len=4096
-per_device_train_batch_size=16
+per_device_train_batch_size=8
 lambda_=0.2
 
 # -------------- Constants -------------- #
