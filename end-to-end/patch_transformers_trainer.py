@@ -755,12 +755,15 @@ def prox_inner_training_loop(
 
 
 
-def prox_compute_loss(self, model, inputs, return_outputs=False):
+def prox_compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch: Optional[torch.Tensor] = None,):
     """
     How the loss is computed by Trainer. By default, all models return the loss in the first element.
 
     Subclass and override for custom behavior.
     """
+    if num_items_in_batch is not None:
+        print(f"[WARNING] 'num_items_in_batch' is set ({num_items_in_batch=}) but will be ignored as it is not supported.")
+
     if self.label_smoother is not None and "labels" in inputs:
         labels = inputs.pop("labels")
     else:
