@@ -40,24 +40,24 @@ def reshape_weights(weight_matrix):
 def main():
     seed_everything(SEED)
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_dir", type=str, default="meta-llama/Meta-Llama-3-8B")
+    parser.add_argument("--mask_dir", type=str, default="meta-llama/Meta-Llama-3-8B")
     parser = add_ckpt_argument(parser)
 
     args = parser.parse_args()
-    model_dir = args.model_dir
+    mask_dir = args.mask_dir
     ckpt = args.ckpt
 
-    selected_checkpoints = select_checkpoints(model_dir, ckpt)
+    selected_checkpoints = select_checkpoints(mask_dir, ckpt)
     for checkpoint in selected_checkpoints:
-        model_name = model_dir + "/" + checkpoint
+        mask_name = mask_dir + "/" + checkpoint
         print(f"Getting the mask of checkpoint {checkpoint}")
-        get_mask(model_name)
+        get_mask(mask_name)
         print("Done")
 
 
-def get_mask(model_name):
+def get_mask(mask_name):
     model = AutoModelForCausalLM.from_pretrained(
-        model_name,
+        mask_name,
         torch_dtype=torch.bfloat16,
         device_map="auto",
     )
@@ -84,11 +84,11 @@ def get_mask(model_name):
             three_sparse += num_zeros_3
 
             mask = explicit_sparsify_magnitude_row(m, 2, 4)
-            if not os.path.isdir(f"./proximal_{model_name.split('/')[0]}"):
-                os.mkdir(f"./proximal_{model_name.split('/')[0]}")
-            if not os.path.isdir(f"./proximal_{model_name}"):
-                os.mkdir(f"./proximal_{model_name}")
-            torch.save(mask, f"./proximal_{model_name}/{n}.pt")
+            if not os.path.isdir(f"./proximal_{mask_name.split('/')[0]}"):
+                os.mkdir(f"./proximal_{mask_name.split('/')[0]}")
+            if not os.path.isdir(f"./proximal_{mask_name}"):
+                os.mkdir(f"./proximal_{mask_name}")
+            torch.save(mask, f"./proximal_{mask_name}/{n}.pt")
 
     print("one sparse ratio: ", one_sparse / total)
     print("two sparse ratio: ", two_sparse / total)

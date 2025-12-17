@@ -22,7 +22,7 @@ echo -e "Starting learning mask with ProxSparse"
 
 CUDA_VISIBLE_DEVICES=7 PYTHONPATH="$PROJECT_ROOT" \
 python -m end_to_end.main \
-  --model "${model_dir}/${model_subdir}" \
+  --model_name "${model_dir}/${model_subdir}" \
   --lambda_value $lambda_ \
   --ctx_len $ctx_len \
   --per_device_train_batch_size $per_device_train_batch_size \
@@ -33,7 +33,7 @@ echo -e "Finished learning, now extracting binary mask. Mask stored in proximal_
 cd "$PROJECT_ROOT"
 PYTHONPATH="$PROJECT_ROOT" \
 python -m end_to_end.mask_op \
-  --model "$DIR" \
+  --mask_dir "$DIR" \
   --ckpt "last"
 
 

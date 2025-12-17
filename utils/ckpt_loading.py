@@ -20,10 +20,10 @@ def add_ckpt_argument(parser):
     return parser
 
 
-def select_checkpoints(model_dir, ckpt):
+def select_checkpoints(mask_dir, ckpt):
     checkpoints = sorted(
         (
-            p.name for p in Path(model_dir).iterdir()
+            p.name for p in Path(mask_dir).iterdir()
             if p.is_dir() and p.name.startswith("checkpoint-")
         ),
         key=lambda name: int(name.split("-", 1)[1])

@@ -92,23 +92,22 @@ def replace_linear(model, mask_set):
 def main():
     seed_everything(SEED)
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_dir', type=str, default="meta-llama/Meta-Llama-3-8B")
-    parser.add_argument('--mask', type=str, default="meta-llama/Meta-Llama-3-8B",
-                        help='Provide the mask name for testing')
+    parser.add_argument('-- model_name', type=str, default="meta-llama/Meta-Llama-3-8B")
+    parser.add_argument('--mask_dir', type=str, default="meta-llama/Meta-Llama-3-8B")
     parser.add_argument('--method', type=str, default="else")
     parser.add_argument('--batch_size', type=str, default='auto')
     parser = add_ckpt_argument(parser)
 
     args = parser.parse_args()
-    mask_name = args.mask
+    model_name = args.model_name
     method = args.method
-    model_dir = args.model_dir
+    mask_dir = args.mask_dir
     ckpt = args.ckpt
 
     if ckpt == 'all':
         raise NotImplementedError("Please eval checkpoints one-by-one")
-    selected_checkpoints = select_checkpoints(model_dir, ckpt)
-    model_name = model_dir + "/" + selected_checkpoints[0]
+    selected_checkpoints = select_checkpoints(mask_dir, ckpt)
+    mask_name = mask_dir + "/" + selected_checkpoints[0]
 
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
