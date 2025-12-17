@@ -11,7 +11,7 @@ import torch.nn.functional as F
 from torch.nn import Linear
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from ..utils.ckpt_loading import *
+from utils.ckpt_loading import *
 
 try:
     from lm_eval import evaluator

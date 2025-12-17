@@ -9,7 +9,7 @@ import torch
 
 from transformers import AutoModelForCausalLM
 
-from ..utils.ckpt_loading import *
+from utils.ckpt_loading import *
 
 
 def seed_everything(seed):
