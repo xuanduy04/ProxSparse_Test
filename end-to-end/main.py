@@ -73,7 +73,7 @@ print(f'Loading dataset at {str(BASE_DIR.parent / "data" / "for_susi")}')
 dataset = load_dataset(
     "parquet",
     data_files={
-        "train": str(BASE_DIR.parent / "data" / "for_susi")
+        "train": str(BASE_DIR.parent / "data" / "for_susi" / "*.parquet")
     },
 )
 
