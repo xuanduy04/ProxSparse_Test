@@ -1,3 +1,5 @@
+SEED=1836
+
 import argparse
 import torch
 import numpy as np
@@ -49,7 +51,7 @@ def seed_everything(seed):
     torch.backends.cudnn.deterministic = True
     torch.cuda.manual_seed_all(seed)
 
-seed_everything(42)
+seed_everything(SEED)
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent  # {etc}/ProxSparse_Test
@@ -69,11 +71,13 @@ config.project_lambda2 = args.project_lambda2
 
 dataset = load_dataset(
     "parquet",
-    data_files=str(BASE_DIR.parent / "data" / "for_susi") + "/*.parquet",
+    data_files={
+        "train": str(BASE_DIR.parent / "data" / "for_susi" / "*.parquet")
+    },
 )
 
-train_testvalid = dataset["train"].train_test_split(test_size=0.95, seed=42)  # train 3563 on 0.99 # when data size is large, there might be memory outage, mostly 95
-valid_test = train_testvalid["test"].train_test_split(test_size=0.999, seed=42)  # valid 352
+train_testvalid = dataset["train"].train_test_split(test_size=0.95, seed=SEED)  # train 3563 on 0.99 # when data size is large, there might be memory outage, mostly 95
+valid_test = train_testvalid["test"].train_test_split(test_size=0.999, seed=SEED)  # valid 352
 dataset = DatasetDict({
     'train': train_testvalid['train'].select(range(samples)),  # 5x data, but 16x, in case of huggingface bug
     'validation': valid_test['train'].select(range(32)),  # we prune at every checkpoint
