@@ -92,7 +92,7 @@ def replace_linear(model, mask_set):
 def main():
     seed_everything(SEED)
     parser = argparse.ArgumentParser()
-    parser.add_argument('-- model_name', type=str, default="meta-llama/Meta-Llama-3-8B")
+    parser.add_argument('--model_name', type=str, default="meta-llama/Meta-Llama-3-8B")
     parser.add_argument('--mask_dir', type=str, default="meta-llama/Meta-Llama-3-8B")
     parser.add_argument('--method', type=str, default="else")
     parser.add_argument('--batch_size', type=str, default='auto')
