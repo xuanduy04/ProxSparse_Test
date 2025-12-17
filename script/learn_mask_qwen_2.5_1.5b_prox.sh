@@ -4,15 +4,14 @@ set -e
 # ------------ Hyperparams ------------ #
 model_dir=Qwen
 model_subdir=Qwen2.5-1.5B
-lambda_=0.2
-batch_size=1
-ctx_len=4096
-samples=400
+
 lr=1e-04
-checkpoint=$samples
+ctx_len=4096
+per_device_train_batch_size=16
+lambda_=0.2
 
 # -------------- Constants -------------- #
-DIR="${model_subdir}-en_sft_final_${samples}_lr${lr}_len${ctx_len}_batch${batch_size}_lambda${lambda_}"
+DIR="${model_subdir}-lr${lr}_len${ctx_len}_batch${per_device_train_batch_size}_lambda${lambda_}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -24,11 +23,11 @@ CUDA_VISIBLE_DEVICES=6 python "$PROJECT_ROOT/end-to-end/main.py" \
   --model "${model_dir}/${model_subdir}" \
   --lambda_value $lambda_ \
   --ctx_len $ctx_len \
-  --batch_size $batch_size \
-  --samples $samples \
+  --per_device_train_batch_size $per_device_train_batch_size \
   --learning_rate $lr
 
 echo -e "Finished learning, now extracting binary mask. Mask stored in proximal_* directory"
 
 python "$PROJECT_ROOT/end-to-end/mask_op.py" \
-  --model "$DIR/checkpoint-$checkpoint"
+  --model "$DIR"
+  --ckpt "last"
