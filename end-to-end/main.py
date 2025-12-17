@@ -35,17 +35,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, default="meta-llama/Llama-2-7b",
                         help='Provide the model name for finetuning')
-    parser.add_argument('--dataset', type=str, default="en",
-                        help='Calibration dataset')
     parser.add_argument('--lambda_value', type=float, default=0.1,
                         help='lambda value')
     parser.add_argument('--lambda2_value', type=float, default=0.1,
                         help='lambda2 value')
-    parser.add_argument('--ctx_len', type=int, default="1024",
+    parser.add_argument('--ctx_len', type=int, default=4096,
                         help='ctx length ratio')
-    parser.add_argument('--samples', type=int, default="3200",
-                        help='samples nr')
-    parser.add_argument('--batch_size', type=int, default="1",
+    parser.add_argument('--per_device_train_batch_size', type=int, default=256,
                         help='batch size')
     parser.add_argument('--project_lambda2', type=int, default="0",
                         help='projected descent')
@@ -57,11 +53,11 @@ def main():
     BASE_DIR = Path(__file__).resolve().parent.parent  # {etc}/ProxSparse_Test
     args = parser.parse_args()
     model_name = args.model
-    dataset_name = args.dataset
     lr = args.learning_rate
     ctx_len = args.ctx_len
-    samples = args.samples
-    batch_size = args.batch_size
+    per_device_train_batch_size = args.per_device_train_batch_size
+    assert per_device_train_batch_size <= 256
+    assert 256 % per_device_train_batch_size == 0
     epsilon = args.epsilon
 
     config.lambda_ = args.lambda_value
@@ -69,23 +65,19 @@ def main():
     config.lambda2_ = args.lambda2_value
     config.project_lambda2 = args.project_lambda2
 
-    print(f'Loading dataset at {str(BASE_DIR.parent / "data" / "for_susi")}...', end=' ')
-    dataset = load_dataset(
+    print(f'Loading dataset at `{str(BASE_DIR.parent / "data" / "for_susi")}`... ', end='')
+    raw_dataset = load_dataset(
         "parquet",
         data_files={
             "train": str(BASE_DIR.parent / "data" / "for_susi" / "*.parquet")
         },
     )
-
-    train_testvalid = dataset["train"].train_test_split(test_size=0.95,
-                                                        seed=SEED)  # train 3563 on 0.99 # when data size is large, there might be memory outage, mostly 95
-    valid_test = train_testvalid["test"].train_test_split(test_size=0.999, seed=SEED)  # valid 352
     dataset = DatasetDict({
-        'train': train_testvalid['train'].select(range(samples)),  # 5x data, but 16x, in case of huggingface bug
-        'validation': valid_test['train'].select(range(32)),  # we prune at every checkpoint
-        'test': valid_test['test']})
-
-    del train_testvalid, valid_test, dataset["test"]
+        'train': raw_dataset['train'].shuffle(seed=SEED),
+        'validation': raw_dataset['train'].select(range(4)),
+        'test': raw_dataset['train'].select(range(4))
+    })
+    del raw_dataset, dataset["test"]
     print('Done')
 
     model = AutoModelForCausalLM.from_pretrained(
@@ -104,21 +96,20 @@ def main():
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"
 
-    dataset_id = dataset_name
     BASE_MODEL = model_name
 
     if config.project_lambda2 == 1:
-        repository_id = f"{BASE_MODEL.split('/')[1]}-{dataset_id}_sft_final_reg{regularizer}_{samples}_lr{lr}_len{ctx_len}_batch{batch_size}_lambdaone{config.lambda_}_lambdatwo{config.lambda2_}"
+        raise NotImplementedError
     else:
-        repository_id = f"{BASE_MODEL.split('/')[1]}-{dataset_id}_sft_final_{samples}_lr{lr}_len{ctx_len}_batch{batch_size}_lambda{config.lambda_}"
+        repository_id = f"{BASE_MODEL.split('/')[1]}-lr{lr}_len{ctx_len}_batch{per_device_train_batch_size}_lambda{config.lambda_}"
+        # DIR="${model_subdir}-lr${lr}_len${ctx_len}_batch${per_device_train_batch_size}_lambda${lambda_}"
 
-    # repository_path = BASE_DIR.parent.parent / "saved_models" / repository_id
 
     sft_config = SFTConfig(
         dataset_text_field="text",
         output_dir=repository_id,
-        per_device_train_batch_size=batch_size,
-        per_device_eval_batch_size=batch_size,
+        per_device_train_batch_size=per_device_train_batch_size,
+        gradient_accumulation_steps=256 // per_device_train_batch_size,
         max_length=ctx_len,
         learning_rate=lr,
         num_train_epochs=1,
