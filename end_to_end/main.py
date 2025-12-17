@@ -108,6 +108,7 @@ def main():
 
     sft_config = SFTConfig(
         dataset_text_field="text",
+        max_steps=2000,
         output_dir=repository_id,
         per_device_train_batch_size=per_device_train_batch_size,
         gradient_accumulation_steps=256 // per_device_train_batch_size,
