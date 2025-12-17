@@ -52,11 +52,11 @@ def seed_everything(seed):
 seed_everything(42)
 
 
+BASE_DIR = Path(__file__).resolve().parent.parent  # {etc}/ProxSparse_Test
 args = parser.parse_args()
 model_name = args.model
 dataset_name = args.dataset
 lr = args.learning_rate
-dataset = load_dataset("allenai/c4", data_files="en/c4-train.00000-of-01024.json.gz")
 ctx_len = args.ctx_len
 samples = args.samples
 batch_size = args.batch_size
@@ -67,9 +67,12 @@ config.epsilon = epsilon
 config.lambda2_ = args.lambda2_value
 config.project_lambda2 = args.project_lambda2
 
+dataset = load_dataset(
+    "parquet",
+    data_files=str(BASE_DIR.parent / "data" / "for_susi") + "/*.parquet",
+)
 
-train_testvalid = dataset["train"].train_test_split(test_size=0.95,
-                                                    seed=42)  # train 3563 on 0.99 # when data size is large, there might be memory outage, mostly 95
+train_testvalid = dataset["train"].train_test_split(test_size=0.95, seed=42)  # train 3563 on 0.99 # when data size is large, there might be memory outage, mostly 95
 valid_test = train_testvalid["test"].train_test_split(test_size=0.999, seed=42)  # valid 352
 dataset = DatasetDict({
     'train': train_testvalid['train'].select(range(samples)),  # 5x data, but 16x, in case of huggingface bug
@@ -103,7 +106,6 @@ if config.project_lambda2 == 1:
 else:
     repository_id = f"{BASE_MODEL.split('/')[1]}-{dataset_id}_sft_final_{samples}_lr{lr}_len{ctx_len}_batch{batch_size}_lambda{config.lambda_}"
 
-# BASE_DIR = Path(__file__).resolve().parent
 # repository_path = BASE_DIR.parent.parent / "saved_models" / repository_id
 
 
