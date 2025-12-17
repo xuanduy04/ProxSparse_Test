@@ -32,3 +32,10 @@ echo -e "Finished learning, now extracting binary mask. Mask stored in proximal_
 
 python "$PROJECT_ROOT/end-to-end/mask_op.py" \
   --model "$DIR/checkpoint-$checkpoint"
+
+# Optional eval
+# python "$PROJECT_ROOT/eval/eval_mask_ppl.py" \
+#   --mask "$DIR/checkpoint-$checkpoint" \
+#   --model "${model_dir}/${model_subdir}" \
+#   --method else \
+#   --ctx_len 4096
