@@ -69,7 +69,7 @@ config.epsilon = epsilon
 config.lambda2_ = args.lambda2_value
 config.project_lambda2 = args.project_lambda2
 
-print(f'Loading dataset at {str(BASE_DIR.parent / "data" / "for_susi")}')
+print(f'Loading dataset at {str(BASE_DIR.parent / "data" / "for_susi")}...', end=' ')
 dataset = load_dataset(
     "parquet",
     data_files={
@@ -85,6 +85,7 @@ dataset = DatasetDict({
     'test': valid_test['test']})
 
 del train_testvalid, valid_test, dataset["test"]
+print('Done')
 
 
 model = AutoModelForCausalLM.from_pretrained(
@@ -134,7 +135,7 @@ sft_config = SFTConfig(
     save_strategy="steps",
     save_steps=0.1,
     save_total_limit=10,
-    load_best_model_at_end=True,
+    # load_best_model_at_end=True,
     save_only_model=True,
     report_to="none",
 )
