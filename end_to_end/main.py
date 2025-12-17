@@ -33,7 +33,7 @@ def seed_everything(seed):
 def main():
     seed_everything(SEED)
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default="meta-llama/Llama-2-7b",
+    parser.add_argument('--model_name', type=str, default="meta-llama/Llama-2-7b",
                         help='Provide the model name for finetuning')
     parser.add_argument('--lambda_value', type=float, default=0.1,
                         help='lambda value')
@@ -52,7 +52,7 @@ def main():
 
     BASE_DIR = Path(__file__).resolve().parent.parent  # {etc}/ProxSparse_Test
     args = parser.parse_args()
-    model_name = args.model
+    model_name = args.model_name
     lr = args.learning_rate
     ctx_len = args.ctx_len
     per_device_train_batch_size = args.per_device_train_batch_size
