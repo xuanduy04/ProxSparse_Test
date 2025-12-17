@@ -19,7 +19,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # ---------------- MAIN ---------------- #
 echo -e "Starting learning mask with ProxSparse"
 
-CUDA_VISIBLE_DEVICES=6 python "$PROJECT_ROOT/end-to-end/main.py" \
+CUDA_VISIBLE_DEVICES=7 python "$PROJECT_ROOT/end-to-end/main.py" \
   --model "${model_dir}/${model_subdir}" \
   --lambda_value $lambda_ \
   --ctx_len $ctx_len \

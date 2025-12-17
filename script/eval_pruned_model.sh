@@ -19,7 +19,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # ---------------- MAIN ---------------- #
 echo -e "Evaluating ${DIR}\n(checkpoint: ${checkpoint})"
 
-python "$PROJECT_ROOT/eval/eval_mask.py" \
+CUDA_VISIBLE_DEVICES=7 python "$PROJECT_ROOT/eval/eval_mask.py" \
   --mask "$DIR/checkpoint-$checkpoint" \
   --model "${model_dir}/${model_subdir}" \
   --batch_size "${1:-auto}"
