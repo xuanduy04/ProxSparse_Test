@@ -20,7 +20,8 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # ---------------- MAIN ---------------- #
 cd "$PROJECT_ROOT"
 
-CUDA_VISIBLE_DEVICES=7 python -m "eval.eval_mask" \
+CUDA_VISIBLE_DEVICES=7 PYTHONPATH="$PROJECT_ROOT" \
+python -m eval.eval_mask \
   --mask "$DIR/checkpoint-$checkpoint" \
   --model "${model_dir}/${model_subdir}" \
   --ckpt "${1:-last}" \
