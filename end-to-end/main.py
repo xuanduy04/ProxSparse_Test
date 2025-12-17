@@ -69,10 +69,11 @@ config.epsilon = epsilon
 config.lambda2_ = args.lambda2_value
 config.project_lambda2 = args.project_lambda2
 
+print(f"Loading dataset at {str(BASE_DIR.parent / "data" / "for_susi")}")
 dataset = load_dataset(
     "parquet",
     data_files={
-        "train": str(BASE_DIR.parent / "data" / "for_susi" / "*.parquet")
+        "train": str(BASE_DIR.parent / "data" / "for_susi")
     },
 )
 
