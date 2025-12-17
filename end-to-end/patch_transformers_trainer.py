@@ -252,6 +252,10 @@ def prox_inner_training_loop(
     self: SFTTrainer, batch_size=None, args=None, resume_from_checkpoint=None, trial=None, ignore_keys_for_eval=None
 ):
     self.accelerator.free_memory()
+    try:
+        self.current_gradient_accumulation_steps = args.gradient_accumulation_steps
+    except:
+        pass
     self._train_batch_size = batch_size
     if self.args.auto_find_batch_size:
         if self.state.train_batch_size != self._train_batch_size:
@@ -371,7 +375,6 @@ def prox_inner_training_loop(
 
     # Activate gradient checkpointing if needed
     if args.gradient_checkpointing:
-        self.current_gradient_accumulation_steps = args.gradient_accumulation_steps
         if args.gradient_checkpointing_kwargs is None:
             gradient_checkpointing_kwargs = {}
         else:
