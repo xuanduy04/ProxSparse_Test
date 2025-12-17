@@ -4,6 +4,7 @@ import numpy as np
 import os
 import random
 
+os.environ["TRL_USE_LIGER_KERNEL"] = "False"
 os.environ["HF_TRACKIO_DISABLE"] = "1"
 from trl import SFTConfig, SFTTrainer
 from datasets import load_dataset, DatasetDict
