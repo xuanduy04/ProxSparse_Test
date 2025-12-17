@@ -118,17 +118,18 @@ def main():
         warmup_ratio=0.1,
         logging_dir=f"{repository_id}/logs",
         logging_strategy="steps",
-        logging_steps=0.1,
+        logging_steps=1,
         logging_first_step=True,
         eval_strategy="no",
         # eval_steps=0.1,
         # eval_accumulation_steps=2,
         save_strategy="steps",
-        save_steps=0.1,
+        save_steps=200,
         save_total_limit=None,
         # load_best_model_at_end=True,
         save_only_model=True,
         report_to="none",
+        packing=True,
     )
 
     # patching with Proxsparse operator
