@@ -31,7 +31,7 @@ python -m end_to_end.main \
 echo -e "Finished learning, now extracting binary mask. Mask stored in proximal_* directory"
 
 cd "$PROJECT_ROOT"
-PYTHONPATH="$PROJECT_ROOT" \
+CUDA_VISIBLE_DEVICES=7 PYTHONPATH="$PROJECT_ROOT" \
 python -m end_to_end.mask_op \
   --mask_dir "$DIR" \
   --ckpt "last"
